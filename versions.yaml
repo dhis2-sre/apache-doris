@@ -1,0 +1,10 @@
+# Doris versions to publish, and the tiers each is published for. Please keep the versions sorted in
+# descending order. The upstream tags are <tier>-<version>, for example apache/doris:fe-2.1.11.
+jdbcVersion: 42.7.5
+jdbcSha256: 69020b3bd20984543e817393f2e6c01a890ef2e37a77dd11d6d8508181d079ab
+tiers:
+  - fe
+  - be
+versions:
+  - 2.1.11
+  - 2.1.7
