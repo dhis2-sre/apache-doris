@@ -23,12 +23,7 @@ jobs:
       # the driver checksum fails here rather than after it has been merged.
       - name: Build
         if: github.event_name == 'pull_request'
-        run: |
-          for version in $(yq '.versions[]' versions.yaml); do
-            for tier in $(yq '.tiers[]' versions.yaml); do
-              make build tier=$tier version=$version
-            done
-          done
+        run: make build-all
 
       - name: Log into registry
         if: github.event_name != 'pull_request'

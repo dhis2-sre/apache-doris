@@ -54,6 +54,12 @@ CREATE CATALOG dhis2 PROPERTIES (
 
 ## Adding a version
 
-Add it to `versions.yaml`, keeping the list in descending order. Every version is built for every
-tier listed there. The driver version and its checksum live in the same file; changing one without
-the other fails the build, which is the point.
+Add it to `versions.yaml`, keeping the list in descending order. Both tiers are built for every
+version, one compose service each. The driver version and its checksum live in the same file;
+changing one without the other fails the build, which is the point.
+
+```shell
+make build-all   # both tiers of every version
+make push-all
+make all         # both
+```

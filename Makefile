@@ -1,29 +1,27 @@
-IMAGE ?= dhis2/apache-doris
-JDBC_VERSION = $(shell yq '.jdbcVersion' versions.yaml)
-JDBC_SHA256 = $(shell yq '.jdbcSha256' versions.yaml)
-VERSIONS = $(shell yq '.versions[]' versions.yaml)
-TIERS = $(shell yq '.tiers[]' versions.yaml)
+JDBC_VERSION = $(shell yq -r '.jdbcVersion' versions.yaml)
+JDBC_SHA256 = $(shell yq -r '.jdbcSha256' versions.yaml)
 
-# Every tier of every version, tagged <tier>-<version>-postgres so the tag says which Doris it
-# derives from and what was added to it.
-.PHONY: all
-all:
-	@for version in $(VERSIONS); do \
-		for tier in $(TIERS); do \
-			$(MAKE) build push tier=$$tier version=$$version || exit 1; \
-		done \
+all: build-all push-all
+
+# Both tiers of every version, tagged <tier>-<version>-postgres so a tag says which Doris it derives
+# from and what was added to it.
+build-all:
+	@yq -r '.versions[]' versions.yaml | while read -r version; do \
+		echo "==> build $$version"; \
+		dorisVersion=$$version jdbcVersion=$(JDBC_VERSION) jdbcSha256=$(JDBC_SHA256) \
+		docker compose build || exit 1; \
 	done
 
-.PHONY: build
-build:
-	docker build \
-		--build-arg tier=$(tier) \
-		--build-arg dorisVersion=$(version) \
-		--build-arg jdbcVersion=$(JDBC_VERSION) \
-		--build-arg jdbcSha256=$(JDBC_SHA256) \
-		--tag $(IMAGE):$(tier)-$(version)-postgres \
-		.
+push-all:
+	@yq -r '.versions[]' versions.yaml | while read -r version; do \
+		echo "==> push $$version"; \
+		dorisVersion=$$version jdbcVersion=$(JDBC_VERSION) jdbcSha256=$(JDBC_SHA256) \
+		docker compose push || exit 1; \
+	done
 
-.PHONY: push
-push:
-	docker push $(IMAGE):$(tier)-$(version)-postgres
+remove-all:
+	@yq -r '.versions[]' versions.yaml | while read -r version; do \
+		dorisVersion=$$version docker compose down --rmi all || true; \
+	done
+
+.PHONY: all build-all push-all remove-all

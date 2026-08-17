@@ -1,0 +1,23 @@
+# One service per Doris tier, since a cluster always has both and they differ only by which upstream
+# image they derive from. The version comes from the environment so the Makefile can walk the list in
+# versions.yaml, building and pushing both tiers at once.
+services:
+  fe:
+    image: dhis2/apache-doris:fe-${dorisVersion:-latest}-postgres
+    build:
+      context: .
+      args:
+        tier: fe
+        dorisVersion: ${dorisVersion:-latest}
+        jdbcVersion: ${jdbcVersion:-42.7.5}
+        jdbcSha256: ${jdbcSha256:-}
+
+  be:
+    image: dhis2/apache-doris:be-${dorisVersion:-latest}-postgres
+    build:
+      context: .
+      args:
+        tier: be
+        dorisVersion: ${dorisVersion:-latest}
+        jdbcVersion: ${jdbcVersion:-42.7.5}
+        jdbcSha256: ${jdbcSha256:-}
