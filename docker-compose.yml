@@ -9,6 +9,7 @@ services:
       args:
         tier: fe
         dorisVersion: ${dorisVersion:-latest}
+        jdkVersion: ${jdkVersion:-17.0.19_10}
         jdbcVersion: ${jdbcVersion:-42.7.5}
         jdbcSha256: ${jdbcSha256:-}
 
@@ -19,5 +20,6 @@ services:
       args:
         tier: be
         dorisVersion: ${dorisVersion:-latest}
+        jdkVersion: ${jdkVersion:-17.0.19_10}
         jdbcVersion: ${jdbcVersion:-42.7.5}
         jdbcSha256: ${jdbcSha256:-}
