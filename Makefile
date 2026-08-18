@@ -1,3 +1,4 @@
+JDK_VERSION = $(shell yq -r '.jdkVersion' versions.yaml)
 JDBC_VERSION = $(shell yq -r '.jdbcVersion' versions.yaml)
 JDBC_SHA256 = $(shell yq -r '.jdbcSha256' versions.yaml)
 
@@ -8,7 +9,7 @@ all: build-all push-all
 build-all:
 	@yq -r '.versions[]' versions.yaml | while read -r version; do \
 		echo "==> build $$version"; \
-		dorisVersion=$$version jdbcVersion=$(JDBC_VERSION) jdbcSha256=$(JDBC_SHA256) \
+		dorisVersion=$$version jdkVersion=$(JDK_VERSION) jdbcVersion=$(JDBC_VERSION) jdbcSha256=$(JDBC_SHA256) \
 		docker compose build || exit 1; \
 	done
 
